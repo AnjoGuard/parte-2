@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parte Dois</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: "Georgia", serif;
+      background:
+        radial-gradient(circle at center, #1a1a1a 0%, #080808 45%, #000 100%);
+      color: #fff;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+
+    .screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.03);
+    }
+
+    /* TELA 1 */
+    #intro {
+      background:
+        radial-gradient(circle at top, rgba(120,0,0,0.12), transparent 35%),
+        radial-gradient(circle at bottom, rgba(180,0,0,0.08), transparent 30%),
+        linear-gradient(to bottom, #090909, #000000);
+    }
+
+    .mist {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(120,0,0,0.08), transparent 25%),
+        radial-gradient(circle at 80% 60%, rgba(120,0,0,0.06), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(120,0,0,0.05), transparent 30%);
+      filter: blur(18px);
+      animation: mistMove 8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes mistMove {
+      from { transform: translateY(0) scale(1); }
+      to   { transform: translateY(-10px) scale(1.04); }
+    }
+
+    .title {
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #f3f3f3;
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.08),
+        0 0 20px rgba(255,0,0,0.18),
+        0 0 40px rgba(120,0,0,0.25);
+      z-index: 3;
+      text-align: center;
+      padding: 0 20px;
+      animation: pulseText 2.8s ease-in-out infinite;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { transform: scale(1); opacity: 0.95; }
+      50% { transform: scale(1.02); opacity: 1; }
+    }
+
+    .btn {
+      margin-top: 34px;
+      padding: 16px 40px;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(to bottom, #2b0000, #120000);
+      color: #f8f8f8;
+      cursor: pointer;
+      border-radius: 999px;
+      box-shadow:
+        0 0 15px rgba(255,0,0,0.18),
+        inset 0 0 15px rgba(255,255,255,0.03);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+      z-index: 3;
+    }
+
+    .btn:hover {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 25px rgba(255,0,0,0.35),
+        inset 0 0 15px rgba(255,255,255,0.04);
+      background: linear-gradient(to bottom, #400000, #190000);
+    }
+
+    /* GOTAS / SANGUE ESCORRENDO */
+    .drips {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 170px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .drip {
+      position: absolute;
+      top: 0;
+      width: 38px;
+      background: linear-gradient(to bottom, #5f0000 0%, #9e0000 55%, #510000 100%);
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      box-shadow:
+        0 8px 18px rgba(120,0,0,0.35),
+        inset 0 -8px 12px rgba(0,0,0,0.25);
+      animation: dripMove linear infinite alternate;
+      opacity: 0.95;
+    }
+
+    .drip::after {
+      content: "";
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      background: #8f0000;
+      border-radius: 50%;
+      filter: blur(0.5px);
+    }
+
+    @keyframes dripMove {
+      from { height: var(--h1); }
+      to   { height: var(--h2); }
+    }
+
+    /* TELA DE TRANSIÇÃO DE SANGUE */
+    .blood-transition {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255,255,255,0.05), transparent 20%),
+        linear-gradient(to bottom, #320000 0%, #7a0000 40%, #a50000 100%);
+      z-index: 10;
+      transform: translateY(-100%);
+      transition: transform 1.8s cubic-bezier(.18,.8,.2,1);
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blood-transition.active {
+      transform: translateY(0);
+    }
+
+    .blood-top {
+      position: absolute;
+      top: -10px;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background:
+        radial-gradient(circle at 4% 100%, #8b0000 0 28px, transparent 29px),
+        radial-gradient(circle at 12% 100%, #8b0000 0 38px, transparent 39px),
+        radial-gradient(circle at 21% 100%, #8b0000 0 24px, transparent 25px),
+        radial-gradient(circle at 30% 100%, #8b0000 0 45px, transparent 46px),
+        radial-gradient(circle at 39% 100%, #8b0000 0 20px, transparent 21px),
+        radial-gradient(circle at 49% 100%, #8b0000 0 42px, transparent 43px),
+        radial-gradient(circle at 58% 100%, #8b0000 0 27px, transparent 28px),
+        radial-gradient(circle at 67% 100%, #8b0000 0 38px, transparent 39px),
+        radial-gradient(circle at 77% 100%, #8b0000 0 25px, transparent 26px),
+        radial-gradient(circle at 87% 100%, #8b0000 0 48px, transparent 49px),
+        radial-gradient(circle at 96% 100%, #8b0000 0 30px, transparent 31px),
+        linear-gradient(to bottom, #8b0000, #7a0000);
+    }
+
+    /* TELA 2 */
+    #photoScreen {
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.2s ease;
+      z-index: 20;
+    }
+
+    #photoScreen.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .photo-wrap {
+      width: min(92vw, 900px);
+      height: min(88vh, 720px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeInUp 1.2s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .photo {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 18px;
+      border: 2px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 0 30px rgba(180,0,0,0.18),
+        0 0 80px rgba(255,0,0,0.08),
+        0 15px 40px rgba(0,0,0,0.6);
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 18px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 700px) {
+      .btn {
+        padding: 14px 28px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <section id="intro" class="screen">
+    <div class="mist"></div>
+
+    <div class="drips">
+      <div class="drip" style="left: 3%;  --h1: 55px; --h2: 95px; animation-duration: 2.7s;"></div>
+      <div class="drip" style="left: 10%; width: 48px; --h1: 70px; --h2: 120px; animation-duration: 3.5s;"></div>
+      <div class="drip" style="left: 18%; width: 30px; --h1: 40px; --h2: 80px; animation-duration: 2.1s;"></div>
+      <div class="drip" style="left: 27%; width: 54px; --h1: 65px; --h2: 130px; animation-duration: 4.1s;"></div>
+      <div class="drip" style="left: 37%; width: 28px; --h1: 35px; --h2: 78px; animation-duration: 2.4s;"></div>
+      <div class="drip" style="left: 47%; width: 62px; --h1: 80px; --h2: 145px; animation-duration: 4.3s;"></div>
+      <div class="drip" style="left: 59%; width: 34px; --h1: 45px; --h2: 92px; animation-duration: 2.8s;"></div>
+      <div class="drip" style="left: 68%; width: 45px; --h1: 60px; --h2: 118px; animation-duration: 3.2s;"></div>
+      <div class="drip" style="left: 79%; width: 32px; --h1: 42px; --h2: 82px; animation-duration: 2.2s;"></div>
+      <div class="drip" style="left: 88%; width: 55px; --h1: 68px; --h2: 132px; animation-duration: 3.8s;"></div>
+    </div>
+
+    <h1 class="title">Pronta para parte dois?</h1>
+    <button class="btn" id="startBtn">Começar</button>
+  </section>
+
+  <div class="blood-transition" id="bloodTransition">
+    <div class="blood-top"></div>
+  </div>
+
+  <section id="photoScreen" class="screen">
+    <div class="photo-wrap">
+      <!-- TROQUE "sua-foto.jpg" pelo nome da imagem -->
+      <img src="sua-foto.jpg" alt="Foto especial" class="photo" />
+    </div>
+    
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const intro = document.getElementById("intro");
+    const bloodTransition = document.getElementById("bloodTransition");
+    const photoScreen = document.getElementById("photoScreen");
+
+    startBtn.addEventListener("click", () => {
+      intro.classList.add("hidden");
+      bloodTransition.classList.add("active");
+
+      setTimeout(() => {
+        photoScreen.classList.add("show");
+      }, 1400);
+    });
+  </script>
+</body>
+</html>
